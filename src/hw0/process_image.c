@@ -76,7 +76,6 @@ void clamp_image(image im) {
     }
 }
 
-
 // These might be handy
 float three_way_max(float a, float b, float c) {
     return (a > b) ? ( (a > c) ? a : c) : ( (b > c) ? b : c) ;
@@ -86,38 +85,25 @@ float three_way_min(float a, float b, float c) {
     return (a < b) ? ( (a < c) ? a : c) : ( (b < c) ? b : c) ;
 }
 
-void rgb_to_hsv(image im) { // FIX: Probably not right :) results are terrible. 
+void rgb_to_hsv(image im) {
+    int i;
+    float h, s, v, min, max, hue_prime, r, g, b;
+    
     for(int x = 0; x < im.w; x++) {
         for(int y = 0; y < im.h; y++) {
             // Get rgb values
-            float r = get_pixel(im, x, y, 0);
-            float g = get_pixel(im, x, y, 1);
-            float b = get_pixel(im, x, y, 2);
+            r = get_pixel(im, x, y, 0);
+            g = get_pixel(im, x, y, 1);
+            b = get_pixel(im, x, y, 2);
             
-            // Difference
-            float c = three_way_max(r, g, b) - three_way_min(r, g, b);
-
-            // Value
-            float v = three_way_max(r, g, b);
+            max = three_way_max(r,g,b);
+            min = three_way_min(r,g,b);
+            v = max;
+            float C = v - min;
+            s = (C == 0) ? 0 : ((v == 0) ? 0 : C / v);
+            hue_prime = (C == 0) ? 0 : ((v == r) ? (g - b) / C : ((v == g) ? ((b - r) / C) + 2.0 : ((r - g) / C) + 4.0));
+            h = (hue_prime < 0) ? (hue_prime / 6.0) + 1 : hue_prime / 6.0;
             
-            // Saturation
-            float s;
-            if((r + g + b) == 0.0) {
-                s = 0.0;
-            }
-            else {
-                s = c / v;
-            }
-
-            // Hue
-            float h;
-            if(r == g && r == b) {h = 0.0;}
-            else if(v == r) {h = ((g - b) / c) / 6;}
-            else if(v == g) {h = (((b - r) / c) + 2) / 6;}
-            else if(c == b) {h = (((r - g) / c) + 4) / 6;}
-            fmod(h, 1.0);
-            if(h < 0) {h++;}
-
             // Set hsv values
             set_pixel(im, x, y, 0, h);
             set_pixel(im, x, y, 1, s);
@@ -126,68 +112,65 @@ void rgb_to_hsv(image im) { // FIX: Probably not right :) results are terrible.
     }
 }
 
-void hsv_to_rgb(image im) { // FIX 
-    // https://github.com/python/cpython/blob/2.7/Lib/colorsys.py
+// https://github.com/viplix3/The-Ancient-Secrets-of-Computer-Vision-Assignments/
+void hsv_to_rgb(image im) {
+    int i;
+	float r, g, b, h, s, v, hue_prime, C, max, min;
+
     for(int x = 0; x < im.w; x++) {
         for(int y = 0; y < im.h; y++) {
             // Get hsv values
-            float h = get_pixel(im, x, y, 0);
-            float s = get_pixel(im, x, y, 1);
-            float v = get_pixel(im, x, y, 2);
+            h = get_pixel(im, x, y, 0);
+            s = get_pixel(im, x, y, 1);
+            v = get_pixel(im, x, y, 2);
 
-            float r;
-            float g;
-            float b;
+            max = v;
+            C = s * v;
+            min = max - C;
+            hue_prime = h * 6.;
+            float X = (1 - fabs(fmod(hue_prime, 2) - 1));
 
-            if(s == 0.0) {
-                set_pixel(im, x, y, 0, 0.0);
-                set_pixel(im, x, y, 1, 0.0);
-                set_pixel(im, x, y, 2, 0.0);
-                return;
+            // In this part of HSV hexagon, R component will have the maximum value, B will have the minimum, and G will have value somehwere between R and B
+            if((hue_prime >= 0.0) && (hue_prime < 1.0)) {
+                r = max;
+                b = min;
+                g = (C * X) + b;
             }
-
-            int i = (int) (h * 6.0);
-            float f = (h * 6.0) - i;
-            float p = v * (1.0 - s);
-            float q = v * (1.0 - s * f);
-            float t = v * (1.0 - s * (1.0 - f));
-            i = i % 6;
-            if(i == 0) {
-                set_pixel(im, x, y, 0, v);
-                set_pixel(im, x, y, 1, t);
-                set_pixel(im, x, y, 2, p);
-                return;
+            // In this part of HSV hexagon, G component will have the maximum value, B will have the minimum, and R will have value somehwere between G and B
+            else if((hue_prime >= 1.0) && (hue_prime < 2.0)) {
+                g = max;
+                b = min;
+                r = (C * X) + b;
             }
-            else if(i == 1) {
-                set_pixel(im, x, y, 0, q);
-                set_pixel(im, x, y, 1, v);
-                set_pixel(im, x, y, 2, p);
-                return;
+            else if((hue_prime >= 2.0) && (hue_prime < 3.0)) {
+                g = max;
+                r = min;
+                b = (C * X) + r;
             }
-            else if(i == 2) {
-                set_pixel(im, x, y, 0, p);
-                set_pixel(im, x, y, 1, v);
-                set_pixel(im, x, y, 2, t);
-                return;
+            else if((hue_prime >= 3.0) && (hue_prime < 4.0)) {
+                b = max;
+                r = min;
+                g = (C * X) + r;
             }
-            else if(i == 3) {
-                set_pixel(im, x, y, 0, p);
-                set_pixel(im, x, y, 1, q);
-                set_pixel(im, x, y, 2, v);
-                return;
+            else if((hue_prime >= 4.0) && (hue_prime < 5.0)) {
+                b = max;
+                g = min;
+                r = (C * X) + g;
             }
-            else if(i == 4) {
-                set_pixel(im, x, y, 0, t);
-                set_pixel(im, x, y, 1, p);
-                set_pixel(im, x, y, 2, v);
-                return;
+            else if((hue_prime >= 5.0) && (hue_prime < 6.0)) {
+                r = max;
+                g = min;
+                b = (C * X) + g;
             }
-            else if(i == 5) {
-                set_pixel(im, x, y, 0, v);
-                set_pixel(im, x, y, 1, p);
-                set_pixel(im, x, y, 2, q);
-                return;
+            else {
+                r = 0;
+                g = 0;
+                b = 0;
             }
+            // Set rgb values
+            set_pixel(im, x, y, 0, r);
+            set_pixel(im, x, y, 1, g);
+            set_pixel(im, x, y, 2, b);
         }
     }
 }
