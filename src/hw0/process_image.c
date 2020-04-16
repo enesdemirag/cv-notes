@@ -86,7 +86,6 @@ float three_way_min(float a, float b, float c) {
 }
 
 void rgb_to_hsv(image im) {
-    int i;
     float h, s, v, min, max, hue_prime, r, g, b;
     
     for(int x = 0; x < im.w; x++) {
@@ -114,7 +113,6 @@ void rgb_to_hsv(image im) {
 
 // https://github.com/viplix3/The-Ancient-Secrets-of-Computer-Vision-Assignments/
 void hsv_to_rgb(image im) {
-    int i;
 	float r, g, b, h, s, v, hue_prime, C, max, min;
 
     for(int x = 0; x < im.w; x++) {
