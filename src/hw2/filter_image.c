@@ -43,20 +43,62 @@ image make_box_filter(int w)
 
 image convolve_image(image im, image filter, int preserve)
 {
-    for(int c = 0; c < im.c; c++) {
-        for(int x = 0; x < im.w; x++) {
-            for(int y = 0; y < im.h; y++) {
-                set_pixel(im, x, y, c, get_pixel(im, x-1, y-1, c) * get_pixel(filter, x-1, y-1, c) +
-                                       get_pixel(im, x-1, y,   c) * get_pixel(filter, x-1, y,   c) +
-                                       get_pixel(im, x-1, y+1, c) * get_pixel(filter, x-1, y+1, c) +
-                                       get_pixel(im, x,   y-1, c) * get_pixel(filter, x,   y-1, c) +
-                                       get_pixel(im, x,   y,   c) * get_pixel(filter, x,   y,   c) +
-                                       get_pixel(im, x,   y+1, c) * get_pixel(filter, x,   y+1, c) +
-                                       get_pixel(im, x+1, y-1, c) * get_pixel(filter, x+1, y-1, c) +
-                                       get_pixel(im, x+1, y,   c) * get_pixel(filter, x+1, y,   c) +
-                                       get_pixel(im, x+1, y+1, c) * get_pixel(filter, x+1, y+1, c));
+    image new_img = make_image(im.w, im.h, im.c);
+
+    if(im.c == filter.c) {
+        for(int c = 0; c < im.c; c++) {
+            for(int x = 0; x < im.w; x++) {
+                for(int y = 0; y < im.h; y++) {
+                    set_pixel(new_img, x, y, c, get_pixel(im, x-1, y-1, c) * get_pixel(filter, x-1, y-1, c) +
+                                        get_pixel(im, x-1, y,   c) * get_pixel(filter, x-1, y,   c) +
+                                        get_pixel(im, x-1, y+1, c) * get_pixel(filter, x-1, y+1, c) +
+                                        get_pixel(im, x,   y-1, c) * get_pixel(filter, x,   y-1, c) +
+                                        get_pixel(im, x,   y,   c) * get_pixel(filter, x,   y,   c) +
+                                        get_pixel(im, x,   y+1, c) * get_pixel(filter, x,   y+1, c) +
+                                        get_pixel(im, x+1, y-1, c) * get_pixel(filter, x+1, y-1, c) +
+                                        get_pixel(im, x+1, y,   c) * get_pixel(filter, x+1, y,   c) +
+                                        get_pixel(im, x+1, y+1, c) * get_pixel(filter, x+1, y+1, c));
+                }
             }
         }
+        return new_img;
+    }
+    else if(preserve == 1) {
+        for(int c = 0; c < im.c; c++) {
+            for(int x = 0; x < im.w; x++) {
+                for(int y = 0; y < im.h; y++) {
+                    set_pixel(new_img, x, y, c, get_pixel(im, x-1, y-1, c) * get_pixel(filter, x-1, y-1, 0) +
+                                        get_pixel(im, x-1, y,   c) * get_pixel(filter, x-1, y,   0) +
+                                        get_pixel(im, x-1, y+1, c) * get_pixel(filter, x-1, y+1, 0) +
+                                        get_pixel(im, x,   y-1, c) * get_pixel(filter, x,   y-1, 0) +
+                                        get_pixel(im, x,   y,   c) * get_pixel(filter, x,   y,   0) +
+                                        get_pixel(im, x,   y+1, c) * get_pixel(filter, x,   y+1, 0) +
+                                        get_pixel(im, x+1, y-1, c) * get_pixel(filter, x+1, y-1, 0) +
+                                        get_pixel(im, x+1, y,   c) * get_pixel(filter, x+1, y,   0) +
+                                        get_pixel(im, x+1, y+1, c) * get_pixel(filter, x+1, y+1, 0));
+                }
+            }
+        }
+        return new_img;
+    }
+    else {
+        for(int c = 0; c < im.c; c++) {
+            for(int x = 0; x < im.w; x++) {
+                for(int y = 0; y < im.h; y++) {
+                    set_pixel(new_img, x, y, c, get_pixel(im, x-1, y-1, c) * get_pixel(filter, x-1, y-1, 0) +
+                                        get_pixel(im, x-1, y,   c) * get_pixel(filter, x-1, y,   0) +
+                                        get_pixel(im, x-1, y+1, c) * get_pixel(filter, x-1, y+1, 0) +
+                                        get_pixel(im, x,   y-1, c) * get_pixel(filter, x,   y-1, 0) +
+                                        get_pixel(im, x,   y,   c) * get_pixel(filter, x,   y,   0) +
+                                        get_pixel(im, x,   y+1, c) * get_pixel(filter, x,   y+1, 0) +
+                                        get_pixel(im, x+1, y-1, c) * get_pixel(filter, x+1, y-1, 0) +
+                                        get_pixel(im, x+1, y,   c) * get_pixel(filter, x+1, y,   0) +
+                                        get_pixel(im, x+1, y+1, c) * get_pixel(filter, x+1, y+1, 0));
+                }
+            }
+        }
+        image gray = rgb_to_grayscale(im);
+        return gray;
     }
 }
 
