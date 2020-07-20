@@ -2,15 +2,13 @@
 #include <math.h>
 #include "image.h"
 
-float nn_interpolate(image im, float x, float y, int c)
-{
+float nn_interpolate(image im, float x, float y, int c) {
     int nn_x = round(x);
     int nn_y = round(y);
     return get_pixel(im, nn_x, nn_y, c);
 }
 
-image nn_resize(image im, int w, int h)
-{
+image nn_resize(image im, int w, int h) {
     image new_img = make_image(w, h, im.c);
     float ratio_x = w / im.w;
     float ratio_y = h / im.h;
@@ -26,8 +24,7 @@ image nn_resize(image im, int w, int h)
     return new_img;
 }
 
-float bilinear_interpolate(image im, float x, float y, int c)
-{
+float bilinear_interpolate(image im, float x, float y, int c) {
     int x1 = (int)x;
     int x2 = (int)x + 1;
     int y1 = (int)y;
@@ -48,8 +45,7 @@ float bilinear_interpolate(image im, float x, float y, int c)
     return d3 * q2 + d4 * q1;
 }
 
-image bilinear_resize(image im, int w, int h)
-{
+image bilinear_resize(image im, int w, int h) {
     image new_img = make_image(w, h, im.c);
     float ratio_x = w / im.w;
     float ratio_y = h / im.h;
