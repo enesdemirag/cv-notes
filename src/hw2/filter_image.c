@@ -18,11 +18,7 @@ void l1_normalize(image im) {
     }
 
     for(int c = 0; c < im.c; c++) {
-        for(int x = 0; x < im.w; x++) {
-            for(int y = 0; y < im.h; y++) {
-                set_pixel(im, x, y, c, (get_pixel(im, x, y, c) / sum));
-            }
-        }
+        scale_image(im, c, (1 / sum));
     }
 }
 
@@ -31,7 +27,7 @@ image make_box_filter(int w) {
 
     for(int x = 0; x < w; x++) {
         for(int y = 0; y < w; y++) {
-            set_pixel(box_filter, x, y, 0, 1);
+            set_pixel(box_filter, x, y, 0, (1 / (w * w)));
         }
     }
 
