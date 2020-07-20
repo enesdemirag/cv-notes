@@ -8,19 +8,56 @@
 
 void l1_normalize(image im)
 {
-    // TODO
+    float sum = 0;
+
+    for(int c = 0; c < im.c; c++) {
+        for(int x = 0; x < im.w; x++) {
+            for(int y = 0; y < im.h; y++) {
+                sum += get_pixel(im, x, y, c);
+            }
+        }
+    }
+
+    for(int c = 0; c < im.c; c++) {
+        for(int x = 0; x < im.w; x++) {
+            for(int y = 0; y < im.h; y++) {
+                float value = get_pixel(im, x, y, c) / sum;
+                set_pixel(im, x, y, c, value);
+            }
+        }
+    }
 }
 
 image make_box_filter(int w)
 {
-    // TODO
-    return make_image(1,1,1);
+    image box_filter = make_image(w, w, 1);
+
+    for(int x = 0; x < w; x++) {
+        for(int y = 0; y < w; y++) {
+            set_pixel(box_filter, x, y, 1, 1);
+        }
+    }
+
+    return box_filter;
 }
 
 image convolve_image(image im, image filter, int preserve)
 {
-    // TODO
-    return make_image(1,1,1);
+    for(int c = 0; c < im.c; c++) {
+        for(int x = 0; x < im.w; x++) {
+            for(int y = 0; y < im.h; y++) {
+                set_pixel(im, x, y, c, get_pixel(im, x-1, y-1, c) * get_pixel(filter, x-1, y-1, c) +
+                                       get_pixel(im, x-1, y,   c) * get_pixel(filter, x-1, y,   c) +
+                                       get_pixel(im, x-1, y+1, c) * get_pixel(filter, x-1, y+1, c) +
+                                       get_pixel(im, x,   y-1, c) * get_pixel(filter, x,   y-1, c) +
+                                       get_pixel(im, x,   y,   c) * get_pixel(filter, x,   y,   c) +
+                                       get_pixel(im, x,   y+1, c) * get_pixel(filter, x,   y+1, c) +
+                                       get_pixel(im, x+1, y-1, c) * get_pixel(filter, x+1, y-1, c) +
+                                       get_pixel(im, x+1, y,   c) * get_pixel(filter, x+1, y,   c) +
+                                       get_pixel(im, x+1, y+1, c) * get_pixel(filter, x+1, y+1, c));
+            }
+        }
+    }
 }
 
 image make_highpass_filter()
