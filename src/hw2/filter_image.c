@@ -51,18 +51,16 @@ image convolve_image(image im, image filter, int preserve) {
         for(int imy = 0; imy < im.h; imy++) {
             for(int fix = 0; fix < filter.w; fix++) {
                 for(int fiy = 0; fiy < filter.h; fiy++) {
+                    int rx = imx - floor(filter.w / 2) + fix;
+                    int ry = imy - floor(filter.h / 2) + fiy;
                     for(int imc = 0; imc < im.c; imc++) {
-                        int rx = imx - floor(filter.w / 2) + fix;
-                        int ry = imy - floor(filter.h / 2) + fiy;
-                        
-                        float value;
+                        float value = get_pixel(convolved_image, imx, imy, imc);
                         if(filter.c == 1) {
                             // TODO: Fix the segmentation fault caused from rx, ry values.
-                            value = get_pixel(filter, fix, fiy, 0) * get_pixel(im, rx, ry, imc);
+                            value += get_pixel(filter, fix, fiy, 0) * get_pixel(im, rx, ry, imc);
                         } else {
-                            value = get_pixel(filter, fix, fiy, imc) * get_pixel(im, rx, ry, imc);
+                            value += get_pixel(filter, fix, fiy, imc) * get_pixel(im, rx, ry, imc);
                         }
-
                         if(preserve) {
                             set_pixel(convolved_image, imx, imy, imc, value);
                         } else {
