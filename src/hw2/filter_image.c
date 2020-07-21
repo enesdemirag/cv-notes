@@ -40,23 +40,24 @@ image convolve_image(image im, image filter, int preserve) {
     // imx, imy, imc: indexes of image pixels
     // fix, fiy: indexes of filter pixels
     // rx, ry: relative indexes of pixels
-    
+    float value = 0;
+    int rx, ry = 0;
     assert(filter.c == im.c || filter.c == 1);
 
     int Co = preserve ? im.c : 1;
     image convolved_image = make_image(im.w, im.h, Co);
-
     // Convolution Loop
     for(int imx = 0; imx < im.w; imx++) {
         for(int imy = 0; imy < im.h; imy++) {
             for(int fix = 0; fix < filter.w; fix++) {
+                rx = imx - floor(filter.w / 2) + fix;
                 for(int fiy = 0; fiy < filter.h; fiy++) {
-                    int rx = imx - floor(filter.w / 2) + fix;
-                    int ry = imy - floor(filter.h / 2) + fiy;
+                    ry = imy - floor(filter.h / 2) + fiy;
                     for(int imc = 0; imc < im.c; imc++) {
-                        float value = get_pixel(convolved_image, imx, imy, imc);
+                        value = get_pixel(convolved_image, imx, imy, imc);
                         if(filter.c == 1) {
                             // TODO: Fix the segmentation fault caused from rx, ry values.
+                            // printf("%d, %d - %d, %d - %d, %d\n", imx, imy, rx, ry, fix, fiy);
                             value += get_pixel(filter, fix, fiy, 0) * get_pixel(im, rx, ry, imc);
                         } else {
                             value += get_pixel(filter, fix, fiy, imc) * get_pixel(im, rx, ry, imc);
