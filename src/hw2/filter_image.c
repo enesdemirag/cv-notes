@@ -35,44 +35,34 @@ image make_box_filter(int w) {
 }
 
 image convolve_image(image im, image filter, int preserve) {
-    // https://github.com/viplix3/The-Ancient-Secrets-of-Computer-Vision-Assignments/blob/master/vision-hw2/src/filter_image.c
     // Co: number of channel in convolved image
     // imx, imy, imc: indexes of image pixels
     // fix, fiy: indexes of filter pixels
     // rx, ry: relative indexes of pixels
-    float value = 0;
-    int rx, ry = 0;
-    assert(filter.c == im.c || filter.c == 1);
 
-    int Co = preserve ? im.c : 1;
-    image convolved_image = make_image(im.w, im.h, Co);
+    // assert(filter.c == im.c || filter.c == 1);
+    // int Co = preserve ? im.c : 1;
+    // image convolved_image = make_image(im.w, im.h, Co);
+    
+    image convolved_img = make_image(im.w, im.h, im.c);
+    float value = 0;
+    int oxo = floor(filter.w / 2);
+    int xox = floor(filter.h / 2);
     // Convolution Loop
-    for(int imx = 0; imx < im.w; imx++) {
-        for(int imy = 0; imy < im.h; imy++) {
-            for(int fix = 0; fix < filter.w; fix++) {
-                rx = imx - floor(filter.w / 2) + fix;
-                for(int fiy = 0; fiy < filter.h; fiy++) {
-                    ry = imy - floor(filter.h / 2) + fiy;
-                    for(int imc = 0; imc < im.c; imc++) {
-                        value = get_pixel(convolved_image, imx, imy, imc);
-                        if(filter.c == 1) {
-                            // TODO: Fix the segmentation fault caused from rx, ry values.
-                            // printf("%d, %d - %d, %d - %d, %d\n", imx, imy, rx, ry, fix, fiy);
-                            value += get_pixel(filter, fix, fiy, 0) * get_pixel(im, rx, ry, imc);
-                        } else {
-                            value += get_pixel(filter, fix, fiy, imc) * get_pixel(im, rx, ry, imc);
-                        }
-                        if(preserve) {
-                            set_pixel(convolved_image, imx, imy, imc, value);
-                        } else {
-                            set_pixel(convolved_image, imx, imy, 0, value);
-                        }
+    for(int imc = 0; imc < im.c; imc++) {
+        for(int imx = 0; imx < im.w; imx++) {
+            for(int imy = 0; imy < im.h; imy++) {
+                value = 0;
+                for(int fix = 0; fix < filter.w; fix++) {
+                    for(int fiy = 0; fiy < filter.h; fiy++) {
+                        value += get_pixel(filter, fix, fiy, 0) * get_pixel(im, (imx - oxo + fix), (imy - xox + fiy), imc);
                     }
                 }
+                set_pixel(convolved_img, imx, imy, imc, value);
             }
         }
     }
-    return convolved_image;
+    return convolved_img;
 }
 
 image make_highpass_filter() {
