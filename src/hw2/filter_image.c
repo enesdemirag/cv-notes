@@ -114,6 +114,15 @@ image make_emboss_filter() {
 // Answer: Yes. In highpass filter, there will be problems on edges. 
 
 image make_gaussian_filter(float sigma) {
+    int kernel_size = ceil(6.0 * sigma) == 6.0 * sigma ? ceil(6.0 * sigma) + 1 : ceil(6.0 * sigma);
+    image gaussian_filter = make_image(kernel_size, kernel_size, 1);
+    for(int x = 0; x < kernel_size; x++) {
+        for(int y = 0; y < kernel_size; y++) {
+            float value = (1.0 / (TWOPI * sigma * sigma)) * exp((x*x + y*y) / (-2 * sigma * sigma));
+            set_pixel(gaussian_filter, x, y, 0, value);
+        }
+    }
+    return gaussian_filter;
 }
 
 image add_image(image a, image b) {
