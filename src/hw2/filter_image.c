@@ -122,6 +122,7 @@ image make_gaussian_filter(float sigma) {
             set_pixel(gaussian_filter, x, y, 0, value);
         }
     }
+    l1_normalize(gaussian_filter);
     return gaussian_filter;
 }
 
