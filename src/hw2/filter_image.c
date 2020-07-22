@@ -27,7 +27,7 @@ image make_box_filter(int w) {
 
     for(int x = 0; x < w; x++) {
         for(int y = 0; y < w; y++) {
-            set_pixel(box_filter, x, y, 0, (1 / (w * w)));
+            set_pixel(box_filter, x, y, 0, (1.0 / (w * w)));
         }
     }
 
