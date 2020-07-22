@@ -111,12 +111,16 @@ image make_emboss_filter() {
 // Question 2.2.2: Do we have to do any post-processing for the above filters? Which ones and why?
 // Answer: Yes. In highpass filter, there will be problems on edges. 
 
+float compute_gaussian(int x, int y, float sigma) {
+    return (1.0 / (TWOPI * sigma * sigma)) * exp(-(x*x + y*y) / (2 * sigma * sigma));
+}
+
 image make_gaussian_filter(float sigma) {
     int kernel_size = ceil(6.0 * sigma) == 6.0 * sigma ? ceil(6.0 * sigma) + 1 : ceil(6.0 * sigma);
     image gaussian_filter = make_image(kernel_size, kernel_size, 1);
     for(int x = 0; x < kernel_size; x++) {
         for(int y = 0; y < kernel_size; y++) {
-            float value = (1.0 / (TWOPI * sigma * sigma)) * exp((x*x + y*y) / (-2 * sigma * sigma));
+            float value = compute_gaussian(kernel_size / 2 - x, kernel_size / 2 - y, sigma);
             set_pixel(gaussian_filter, x, y, 0, value);
         }
     }
