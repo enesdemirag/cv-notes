@@ -5,11 +5,13 @@
 #include "image.h"
 
 float get_pixel(image im, int x, int y, int c) {
-    if(x > im.w) {x = im.w;}
-    else if(y > im.h) {y = im.h;}
-    else if(c > im.c) {c = im.c;}
+    if(x >= im.w) {x = im.w - 1;}
     else if(x < 0) {x = 0;}
+    
+    if(y >= im.h) {y = im.h - 1;}
     else if(y < 0) {y = 0;}
+    
+    if(c >= im.c) {c = im.c - 1;}
     else if(c < 0) {c = 0;}
 
     int index = (c * (im.h * im.w)) + (y * im.w) + x;      
