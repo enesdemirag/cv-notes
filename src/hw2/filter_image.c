@@ -38,7 +38,6 @@ image convolve_image(image im, image filter, int preserve) {
     // Co: number of channel in convolved image
     // imx, imy, imc: indexes of image pixels
     // fix, fiy: indexes of filter pixels
-    // rx, ry: relative indexes of pixels
 
     assert(filter.c == im.c || filter.c == 1);
     int Co = preserve ? im.c : 1;
@@ -75,7 +74,7 @@ image convolve_image(image im, image filter, int preserve) {
 }
 
 image make_highpass_filter() {
-    // TODO
+    
     return make_image(1,1,1);
 }
 
