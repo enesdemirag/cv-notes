@@ -40,14 +40,15 @@ image convolve_image(image im, image filter, int preserve) {
     // fix, fiy: indexes of filter pixels
     // rx, ry: relative indexes of pixels
 
-    // assert(filter.c == im.c || filter.c == 1);
-    // int Co = preserve ? im.c : 1;
-    // image convolved_image = make_image(im.w, im.h, Co);
+    assert(filter.c == im.c || filter.c == 1);
+    int Co = preserve ? im.c : 1;
     
-    image convolved_img = make_image(im.w, im.h, im.c);
+    image convolved_img = make_image(im.w, im.h, Co);
     float value = 0;
+
     int oxo = floor(filter.w / 2);
     int xox = floor(filter.h / 2);
+    
     // Convolution Loop
     for(int imc = 0; imc < im.c; imc++) {
         for(int imx = 0; imx < im.w; imx++) {
@@ -55,10 +56,18 @@ image convolve_image(image im, image filter, int preserve) {
                 value = 0;
                 for(int fix = 0; fix < filter.w; fix++) {
                     for(int fiy = 0; fiy < filter.h; fiy++) {
-                        value += get_pixel(filter, fix, fiy, 0) * get_pixel(im, (imx - oxo + fix), (imy - xox + fiy), imc);
+                        if(filter.c == 1) {
+                            value += get_pixel(filter, fix, fiy, 0) * get_pixel(im, (imx - oxo + fix), (imy - xox + fiy), imc);
+                        } else {
+                            value += get_pixel(filter, fix, fiy, imc) * get_pixel(im, (imx - oxo + fix), (imy - xox + fiy), imc);
+                        }
                     }
                 }
-                set_pixel(convolved_img, imx, imy, imc, value);
+                if(preserve) {
+                    set_pixel(convolved_img, imx, imy, imc, value);
+                } else {
+                    set_pixel(convolved_img, imx, imy, 0, value);
+                }
             }
         }
     }
