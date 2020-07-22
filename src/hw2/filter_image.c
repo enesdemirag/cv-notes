@@ -45,8 +45,8 @@ image convolve_image(image im, image filter, int preserve) {
     image convolved_img = make_image(im.w, im.h, Co);
     float value = 0;
 
-    int oxo = floor(filter.w / 2);
-    int xox = floor(filter.h / 2);
+    int oxo = filter.w / 2;
+    int xox = filter.h / 2;
     
     // Convolution Loop
     for(int imc = 0; imc < im.c; imc++) {
@@ -75,21 +75,21 @@ image convolve_image(image im, image filter, int preserve) {
 
 image make_highpass_filter() {
     image highpass_filter = make_image(3, 3, 1);
-    set_pixel(highpass_filter, 0, 0, 0, 0);
     set_pixel(highpass_filter, 0, 1, 0, -1);
-    set_pixel(highpass_filter, 0, 2, 0, 0);
     set_pixel(highpass_filter, 1, 0, 0, -1);
     set_pixel(highpass_filter, 1, 1, 0, 4);
     set_pixel(highpass_filter, 1, 2, 0, -1);
-    set_pixel(highpass_filter, 2, 0, 0, 0);
     set_pixel(highpass_filter, 2, 1, 0, -1);
-    set_pixel(highpass_filter, 2, 2, 0, 0);
     return highpass_filter;
 }
 
 image make_sharpen_filter() {
-    image sharpen_filter = make_highpass_filter();
+    image sharpen_filter = make_image(3, 3, 1);
+    set_pixel(sharpen_filter, 0, 1, 0, -1);
+    set_pixel(sharpen_filter, 1, 0, 0, -1);
     set_pixel(sharpen_filter, 1, 1, 0, 5);
+    set_pixel(sharpen_filter, 1, 2, 0, -1);
+    set_pixel(sharpen_filter, 2, 1, 0, -1);
     return sharpen_filter;
 }
 
@@ -97,11 +97,9 @@ image make_emboss_filter() {
     image emboss_filter = make_image(3, 3, 1);
     set_pixel(emboss_filter, 0, 0, 0, -2);
     set_pixel(emboss_filter, 0, 1, 0, -1);
-    set_pixel(emboss_filter, 0, 2, 0, 0);
     set_pixel(emboss_filter, 1, 0, 0, -1);
     set_pixel(emboss_filter, 1, 1, 0, 1);
     set_pixel(emboss_filter, 1, 2, 0, 1);
-    set_pixel(emboss_filter, 2, 0, 0, 0);
     set_pixel(emboss_filter, 2, 1, 0, 1);
     set_pixel(emboss_filter, 2, 2, 0, 2);
     return emboss_filter;
