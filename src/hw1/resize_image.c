@@ -10,8 +10,8 @@ float nn_interpolate(image im, float x, float y, int c) {
 
 image nn_resize(image im, int w, int h) {
     image new_img = make_image(w, h, im.c);
-    float ratio_x = w / im.w;
-    float ratio_y = h / im.h;
+    float ratio_x = (float)w / im.w;
+    float ratio_y = (float)h / im.h;
 
     for(int c = 0; c < im.c; c++) {
         for(int x = 0; x < w; x++) {
@@ -47,8 +47,8 @@ float bilinear_interpolate(image im, float x, float y, int c) {
 
 image bilinear_resize(image im, int w, int h) {
     image new_img = make_image(w, h, im.c);
-    float ratio_x = w / im.w;
-    float ratio_y = h / im.h;
+    float ratio_x = (float)w / im.w;
+    float ratio_y = (float)h / im.h;
 
     for(int c = 0; c < im.c; c++) {
         for(int x = 0; x < w; x++) {
