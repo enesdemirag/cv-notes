@@ -108,14 +108,12 @@ image make_emboss_filter() {
 }
 
 // Question 2.2.1: Which of these filters should we use preserve when we run our convolution and which ones should we not? Why?
-// Answer: TODO
+// Answer: We should use preserve in sharpen and emboss because the total sum of the kernel values is 1 and we expect colored outputs.
 
 // Question 2.2.2: Do we have to do any post-processing for the above filters? Which ones and why?
-// Answer: TODO
+// Answer: Yes. In highpass filter, there will be problems on edges. 
 
 image make_gaussian_filter(float sigma) {
-    // TODO
-    return make_image(1,1,1);
 }
 
 image add_image(image a, image b) {
