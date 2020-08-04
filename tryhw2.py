@@ -13,7 +13,7 @@ bigbox = convolve_image(im, f, 1)
 save_image(bigbox, "dog-box13")
 
 f = make_highpass_filter()
-high = convolve_image(im, f, 1)
+high = convolve_image(im, f, 0)
 save_image(high, "dog-highpass")
 
 f = make_sharpen_filter()
