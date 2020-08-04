@@ -14,7 +14,7 @@ float get_pixel(image im, int x, int y, int c) {
     if(c >= im.c) {c = im.c - 1;}
     else if(c < 0) {c = 0;}
 
-    int index = (c * (im.h * im.w)) + (y * im.w) + x;      
+    int index = (c * (im.h * im.w)) + (y * im.w) + x;
     return im.data[index];
 }
 
@@ -33,7 +33,7 @@ image copy_image(image im) {
     for(int c = 0; c < im.c; c++) {
         for(int x = 0; x < im.w; x++) {
             for(int y = 0; y < im.h; y++) {
-                float value = get_pixel(im, x, y, c); 
+                float value = get_pixel(im, x, y, c);
                 set_pixel(copy, x, y, c, value);
             }
         }
@@ -46,7 +46,7 @@ image rgb_to_grayscale(image im) {
     image gray = make_image(im.w, im.h, 1);
     for(int x = 0; x < im.w; x++) {
         for(int y = 0; y < im.h; y++) {
-            float r = get_pixel(im, x, y, 0); 
+            float r = get_pixel(im, x, y, 0);
             float g = get_pixel(im, x, y, 1);
             float b = get_pixel(im, x, y, 2);
             float value = (0.299 * r) + (0.587 * g) + (0.114 * b);
@@ -80,11 +80,11 @@ void clamp_image(image im) {
 
 // These might be handy
 float three_way_max(float a, float b, float c) {
-    return (a > b) ? ( (a > c) ? a : c) : ( (b > c) ? b : c) ;
+    return (a > b) ? ( (a > c) ? a : c) : ( (b > c) ? b : c);
 }
 
 float three_way_min(float a, float b, float c) {
-    return (a < b) ? ( (a < c) ? a : c) : ( (b < c) ? b : c) ;
+    return (a < b) ? ( (a < c) ? a : c) : ( (b < c) ? b : c);
 }
 
 void rgb_to_hsv(image im) {
