@@ -31,3 +31,11 @@ save_image(gauss2, "dog-gauss2")
 f = make_gaussian_filter(3)
 gauss3 = convolve_image(im, f, 1)
 save_image(gauss3, "dog-gauss3")
+
+f = make_gaussian_filter(2)
+lfreq = convolve_image(im, f, 1)
+hfreq = im - lfreq
+reconstruct = lfreq + hfreq
+save_image(lfreq, "low-frequency")
+save_image(hfreq, "high-frequency")
+save_image(reconstruct, "reconstruct")
