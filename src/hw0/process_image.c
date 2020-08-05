@@ -23,9 +23,7 @@ void set_pixel(image im, int x, int y, int c, float v) {
         return;
     }
     else {
-        int index = (c * (im.h * im.w)) + (y * im.w) + x;      
-        if(v > 1.0) {v = 1.0;}
-        else if(v < 0) {v = 0;}
+        int index = (c * (im.h * im.w)) + (y * im.w) + x;
         im.data[index] = v;
     }
 }
