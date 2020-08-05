@@ -52,7 +52,7 @@ image convolve_image(image im, image filter, int preserve) {
     for(int imc = 0; imc < im.c; imc++) {
         for(int imx = 0; imx < im.w; imx++) {
             for(int imy = 0; imy < im.h; imy++) {
-                value = 0;
+                value = 0; // get_pixel(convolved_img, imx, imy, imc);
                 for(int fix = 0; fix < filter.w; fix++) {
                     for(int fiy = 0; fiy < filter.h; fiy++) {
                         if(filter.c == 1) {
@@ -70,6 +70,7 @@ image convolve_image(image im, image filter, int preserve) {
             }
         }
     }
+    clamp_image(convolved_img);
     return convolved_img;
 }
 
