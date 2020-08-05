@@ -44,3 +44,5 @@ res = sobel_image(im)
 mag = res[0]
 feature_normalize(mag)
 save_image(mag, "magnitude")
+cool = colorize_sobel(im)
+save_image(cool, "colorized-sobel")
