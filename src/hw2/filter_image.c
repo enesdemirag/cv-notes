@@ -160,22 +160,78 @@ image sub_image(image a, image b) {
 }
 
 image make_gx_filter() {
-    // TODO
-    return make_image(1,1,1);
+    image gx = make_image(3, 3, 1);
+    set_pixel(gx, 0, 0, 0, -1);
+    set_pixel(gx, 2, 0, 0, 1);
+    set_pixel(gx, 0, 1, 0, -2);
+    set_pixel(gx, 2, 1, 0, 2);
+    set_pixel(gx, 0, 2, 0, -1);
+    set_pixel(gx, 2, 2, 0, 1);
+    return gx;
 }
 
 image make_gy_filter() {
-    // TODO
-    return make_image(1,1,1);
+    image gy = make_image(3, 3, 1);
+    set_pixel(gy, 0, 0, 0, -1);
+    set_pixel(gy, 0, 2, 0, 1);
+    set_pixel(gy, 1, 0, 0, -2);
+    set_pixel(gy, 1, 2, 0, 2);
+    set_pixel(gy, 2, 0, 0, -1);
+    set_pixel(gy, 2, 2, 0, 1);
+    return gy;
 }
 
 void feature_normalize(image im) {
-    // TODO
+    // Find min and max pixel values
+    float min = +INFINITY;
+    float max = -INFINITY;
+    for(int c = 0; c < im.c; c++) {
+        for(int x = 0; x < im.w; x++) {
+            for(int y = 0; y < im.h; y++) {
+                min = fmin(min, get_pixel(im, x, y, c));
+                max = fmax(max, get_pixel(im, x, y, c));
+            }
+        }
+    }
+
+    // Rescaling
+    float v = 0;
+    float range = max - min;
+    // assert(range == 0); // Cannot divide to zero 
+    for(int c = 0; c < im.c; c++) {
+        for(int x = 0; x < im.w; x++) {
+            for(int y = 0; y < im.h; y++) {
+                v = (get_pixel(im, x, y, c) - min) / range;
+                set_pixel(im, x, y, c, v);
+            }
+        }
+    }
 }
 
 image *sobel_image(image im) {
-    // TODO
-    return calloc(2, sizeof(image));
+    image *mag_dir = calloc(2, sizeof(image)); // Magnitude and Direction
+    
+    mag_dir[0] = make_image(im.w, im.h, 1);
+    mag_dir[1] = make_image(im.w, im.h, 1);
+    
+    image Gx = convolve_image(im, make_gx_filter(), 0);
+    image Gy = convolve_image(im, make_gy_filter(), 0);
+    
+    float px, py = 0;
+    for(int x = 0; x < im.w; x++) {
+        for(int y = 0; y < im.h; y++) {
+            px = get_pixel(Gx, x, y, 0);
+            py = get_pixel(Gy, x, y, 0);
+
+            set_pixel(mag_dir[0], x, y, 0, sqrt(px * px + py * py));
+            set_pixel(mag_dir[1], x, y, 0, atan2(py, px));
+        }
+    }
+
+    free_image(Gx);
+    free_image(Gy);
+    
+    return mag_dir;
 }
 
 image colorize_sobel(image im) {
