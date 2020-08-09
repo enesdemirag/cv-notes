@@ -182,6 +182,7 @@ image cornerness_response(image S) {
             cornerness = det - alpha * pow(trace, 2);
             set_pixel(R, x, y, 0, cornerness);
         }
+    }
     return R;
 }
 
@@ -196,6 +197,22 @@ image nms_image(image im, int w) {
     //     for neighbors within w:
     //         if neighbor response greater than pixel response:
     //             set response to be very low (I use -999999 [why not 0??])
+    float pixel, neighbor;
+    for(int c = 0; c < r.c; c++) {
+        for(int x = 0; x < r.w; x++) {
+            for(int y = 0; y < r.h; y++) {
+                pixel = get_pixel(r, x, y, c);
+                for(int i = -w; i < w; i++) {
+                    for(int j = -w; j < w; j++) {
+                        neighbor = get_pixel(r, x - i, y - j, c);
+                        if(neighbor >= pixel) {
+                            set_pixel(r, x, y, c, 0);
+                        }
+                    }
+                }
+            }
+        }
+    }
     return r;
 }
 
