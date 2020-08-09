@@ -74,12 +74,37 @@ void mark_corners(image im, descriptor *d, int n) {
     }
 }
 
+float compute_1d_gaussian(int x, float sigma) {
+    float gaussian = (1 / (TWOPI * pow(sigma, 2))) * (exp(-(pow(x, 2)) / (2 * pow(sigma, 2))));
+    return gaussian;
+}
+
+image transpose_image(image im) {
+    image transposed_im = make_image(im.h, im.w, im.c);
+
+    for(int c = 0; c < im.c; c++) {
+        for(int x = 0; x<im.w; x++) {
+            for(int y = 0; y<im.h; y++) {
+                set_pixel(transposed_im, x, y, c, get_pixel(im, y, x, c));
+            }
+        }
+    }
+
+    return transposed_im;
+}
+
 // Creates a 1d Gaussian filter.
 // float sigma: standard deviation of Gaussian.
 // returns: single row image of the filter.
 image make_1d_gaussian(float sigma) {
-    // TODO: optional, make separable 1d Gaussian.
-    return make_image(1,1,1);
+    int kernel_size = ceil(6.0 * sigma) == 6.0 * sigma ? ceil(6.0 * sigma) + 1 : ceil(6.0 * sigma);
+    image gaussian_filter = make_image(kernel_size, 1, 1);
+    for(int x = 0; x < kernel_size; x++) {
+        float value = compute_1d_gaussian(kernel_size / 2 - x, sigma);
+        set_pixel(gaussian_filter, x, 0, 0, value);
+    }
+    l1_normalize(gaussian_filter);
+    return gaussian_filter;
 }
 
 // Smooths an image using separable Gaussian filter.
@@ -87,16 +112,19 @@ image make_1d_gaussian(float sigma) {
 // float sigma: std dev. for Gaussian.
 // returns: smoothed image.
 image smooth_image(image im, float sigma) {
-    if(1){
-        image g = make_gaussian_filter(sigma);
-        image s = convolve_image(im, g, 1);
-        free_image(g);
-        return s;
-    } else {
-        // TODO: optional, use two convolutions with 1d gaussian filter.
-        // If you implement, disable the above if check.
-        return copy_image(im);
-    }
+    // image g = make_gaussian_filter(sigma);
+    // image s = convolve_image(im, g, 1);
+    // free_image(g);
+    // return s;
+
+    image g1_x = make_1d_gaussian(sigma);
+    image gx_1 = transpose_image(g1_x);
+    image s = convolve_image(convolve_image(im, g1_x, 1), gx_1, 1);
+
+    free_image(g1_x);
+    free_image(gx_1);
+
+    return s;
 }
 
 // Calculate the structure matrix of an image.
