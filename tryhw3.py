@@ -72,9 +72,13 @@ def field_panorama():
     save_image(pan5, "field_panorama_5")
 
 
-draw_corners()
-draw_matches()
-easy_panorama()
+im = load_image("data/Rainier1.png")
+detect_and_draw_corners(im, 2, 50, 3)
+save_image(im, "corners")
+
+# draw_corners()
+# draw_matches()
+# easy_panorama()
 # rainier_panorama()
 # field_panorama()
 
