@@ -5,51 +5,57 @@ import random
 
 lib = CDLL(os.path.join(os.path.dirname(__file__), "libuwimg.so"), RTLD_GLOBAL)
 
+
 def c_array(ctype, values):
-    arr = (ctype*len(values))()
+    arr = (ctype * len(values))()
     arr[:] = values
     return arr
 
+
 class IMAGE(Structure):
-    _fields_ = [("w", c_int),
-                ("h", c_int),
-                ("c", c_int),
-                ("data", POINTER(c_float))]
+    _fields_ = [("w", c_int), ("h", c_int), ("c", c_int), ("data", POINTER(c_float))]
+
     def __add__(self, other):
         return add_image(self, other)
+
     def __sub__(self, other):
         return sub_image(self, other)
 
+
 class POINT(Structure):
-    _fields_ = [("x", c_float),
-                ("y", c_float)]
+    _fields_ = [("x", c_float), ("y", c_float)]
+
 
 class DESCRIPTOR(Structure):
-    _fields_ = [("p", POINT),
-                ("n", c_int),
-                ("data", POINTER(c_float))]
+    _fields_ = [("p", POINT), ("n", c_int), ("data", POINTER(c_float))]
+
 
 class MATRIX(Structure):
-    _fields_ = [("rows", c_int),
-                ("cols", c_int),
-                ("data", POINTER(POINTER(c_double))),
-                ("shallow", c_int)]
+    _fields_ = [
+        ("rows", c_int),
+        ("cols", c_int),
+        ("data", POINTER(POINTER(c_double))),
+        ("shallow", c_int),
+    ]
+
 
 class DATA(Structure):
-    _fields_ = [("X", MATRIX),
-                ("y", MATRIX)]
+    _fields_ = [("X", MATRIX), ("y", MATRIX)]
+
 
 class LAYER(Structure):
-    _fields_ = [("in", MATRIX),
-                ("dw", MATRIX),
-                ("w", MATRIX),
-                ("v", MATRIX),
-                ("out", MATRIX),
-                ("activation", c_int)]
+    _fields_ = [
+        ("in", MATRIX),
+        ("dw", MATRIX),
+        ("w", MATRIX),
+        ("v", MATRIX),
+        ("out", MATRIX),
+        ("activation", c_int),
+    ]
+
 
 class MODEL(Structure):
-    _fields_ = [("layers", POINTER(LAYER)),
-                ("n", c_int)]
+    _fields_ = [("layers", POINTER(LAYER)), ("n", c_int)]
 
 
 (LINEAR, LOGISTIC, RELU, LRELU, SOFTMAX) = range(5)
@@ -114,22 +120,28 @@ load_image_lib = lib.load_image
 load_image_lib.argtypes = [c_char_p]
 load_image_lib.restype = IMAGE
 
+
 def load_image(f):
-    return load_image_lib(f.encode('ascii'))
+    return load_image_lib(f.encode("ascii"))
+
 
 save_png_lib = lib.save_png
 save_png_lib.argtypes = [IMAGE, c_char_p]
 save_png_lib.restype = None
 
+
 def save_png(im, f):
-    return save_png_lib(im, f.encode('ascii'))
+    return save_png_lib(im, f.encode("ascii"))
+
 
 save_image_lib = lib.save_image
 save_image_lib.argtypes = [IMAGE, c_char_p]
 save_image_lib.restype = None
 
+
 def save_image(im, f):
-    return save_image_lib(im, f.encode('ascii'))
+    return save_image_lib(im, f.encode("ascii"))
+
 
 same_image = lib.same_image
 same_image.argtypes = [IMAGE, IMAGE]
@@ -208,7 +220,16 @@ find_and_draw_matches.argtypes = [IMAGE, IMAGE, c_float, c_float, c_int]
 find_and_draw_matches.restype = IMAGE
 
 panorama_image_lib = lib.panorama_image
-panorama_image_lib.argtypes = [IMAGE, IMAGE, c_float, c_float, c_int, c_float, c_int, c_int]
+panorama_image_lib.argtypes = [
+    IMAGE,
+    IMAGE,
+    c_float,
+    c_float,
+    c_int,
+    c_float,
+    c_int,
+    c_int,
+]
 panorama_image_lib.restype = IMAGE
 
 draw_flow = lib.draw_flow
@@ -227,7 +248,10 @@ optical_flow_webcam = lib.optical_flow_webcam
 optical_flow_webcam.argtypes = [c_int, c_int, c_int]
 optical_flow_webcam.restype = None
 
-def panorama_image(a, b, sigma=2, thresh=5, nms=3, inlier_thresh=2, iters=10000, cutoff=30):
+
+def panorama_image(
+    a, b, sigma=2, thresh=5, nms=3, inlier_thresh=2, iters=10000, cutoff=30
+):
     return panorama_image_lib(a, b, sigma, thresh, nms, inlier_thresh, iters, cutoff)
 
 
@@ -251,11 +275,13 @@ make_layer = lib.make_layer
 make_layer.argtypes = [c_int, c_int, c_int]
 make_layer.restype = LAYER
 
+
 def make_model(layers):
     m = MODEL()
     m.n = len(layers)
-    m.layers = (LAYER*m.n) (*layers)
+    m.layers = (LAYER * m.n)(*layers)
     return m
+
 
 if __name__ == "__main__":
     im = load_image("data/dog.jpg")
